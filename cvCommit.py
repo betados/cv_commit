@@ -2,13 +2,39 @@ import argparse
 import yaml
 
 
-def init():
+class Commit(object):
+    def __init__(self, message, parent):
+        self.message = message
+        self.__parent = parent
+
+    def __repr__(self):
+        return self.__class__.__name__ + f'("{self.message}", {self.__parent})'
+
+
+def init(args):
+    try:
+        open('.cv.yaml', 'r')
+        print('Already a cv repository')
+        exit()
+    except FileNotFoundError:
+        stream = open('.cv.yaml', 'w')
+        yaml.dump({'commits': []}, stream)
+
+
+def commit(args):
+    try:
+        open('.cv.yaml', 'r')
+    except FileNotFoundError:
+        print('fatal: not a cv repository')
+        exit()
+    stream = open('.cv.yaml', 'r')
+    data = yaml.load(stream)
+    try:
+        data['commits'].append(Commit(args.message, data['commits'][-1]))
+    except IndexError:
+        data['commits'].append(Commit(args.message, None))
     stream = open('.cv.yaml', 'w')
-    yaml.dump({}, stream)
-
-
-def commit():
-    pass
+    yaml.dump(data, stream)
 
 
 def rebase():
@@ -36,4 +62,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # print(args)
-    commands[args.command]()
+    commands[args.command](args)
