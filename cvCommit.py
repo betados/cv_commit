@@ -18,7 +18,10 @@ def init(args):
         exit()
     except FileNotFoundError:
         stream = open('.cv.yaml', 'w')
-        yaml.dump({'commits': []}, stream)
+        yaml.dump({
+            'commits': [],
+            'last': -1,
+        }, stream)
 
 
 def commit(args):
@@ -30,15 +33,16 @@ def commit(args):
     stream = open('.cv.yaml', 'r')
     data = yaml.load(stream)
     try:
-        data['commits'].append(Commit(args.message, data['commits'][-1]))
+        data['commits'].append(Commit(args.message, data['commits'][data['last']]))
     except IndexError:
         data['commits'].append(Commit(args.message, None))
+    data['last'] = -1
     stream = open('.cv.yaml', 'w')
     yaml.dump(data, stream)
 
 
-def rebase():
-    pass
+def rebase(args):
+    raise NotImplementedError
 
 
 commands = {
