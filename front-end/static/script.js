@@ -90,7 +90,7 @@ function draw(last) {
 
 function read_json(){
     jQuery.support.cors = true;
-    return $.getJSON("static/result.json", function(json) {
+    return $.getJSON("static/commits.json", function(json) {
        jQuery.each(eval(json), function(name, data){
             //  alert( name + ": " + data['message'] +','+data['parent']);
             if (data['parent'] == null){

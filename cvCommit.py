@@ -1,4 +1,5 @@
 import argparse
+
 import yaml
 
 
@@ -31,7 +32,7 @@ def init(args):
 def commit(args):
     data = open_repo()
     data['commits'].append(Commit(args.message, data['last']))
-    data['last'] = len(data['commits'])-1
+    data['last'] = len(data['commits']) - 1
     stream = open('.cv.yaml', 'w')
     yaml.dump(data, stream)
 
@@ -48,11 +49,11 @@ def checkout(args):
 
 def export(args):
     data = open_repo()
-    print(data['commits'])
+    # print(data['commits'])
     commits_dict = {str(i): {"message": c.message, "parent": c.parent} for i, c in enumerate(data['commits'])}
-    print(commits_dict)
+    # print(commits_dict)
     import json
-    with open('front-end/static/result.json', 'w') as fp:
+    with open('front-end/static/commits.json', 'w') as fp:
         json.dump(commits_dict, fp)
 
 
