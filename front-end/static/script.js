@@ -79,6 +79,9 @@ class ToolTip{
     }
 }
 
+var toolTip = new ToolTip();
+toolTip.draw();
+
 function draw(last) {
     for (var i=0; i<last.children.length; i++){
         last.children[i].set_pos();
@@ -102,29 +105,20 @@ function read_json(){
                 commits.push(new Commit(data['message'], commits[data['parent']]));
             }
         });
-
+        render()
     });
 }
 
-read_json();
-var toolTip = new ToolTip();
-toolTip.draw();
-
-window.onload = function(){
-    console.log(commits)
-
-    // Waiting for the read_json() to finish
-    //alert('Reading');
-
+function render(){
+    console.log(commits.length);
+    console.log(commits);
+    console.log(commits.length);
     init_depth = 20 * commit_count + 50;
     var first = commits[0];
-
     first.set_pos();
     draw(first);
-
-
     document.getElementById('svg').innerHTML = svg_html;
-}
+    }
 
 function showTooltip(event, object, message){
     console.log(message);
@@ -134,3 +128,5 @@ function showTooltip(event, object, message){
 function hideTooltip(){
     toolTip.move(999, 999, 'Gromenauer')
 }
+
+read_json();
