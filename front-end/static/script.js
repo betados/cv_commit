@@ -31,7 +31,7 @@ class Commit {
         this.children.push(child);
     }
     draw() {
-        svg_html += `<circle id=commit${this.id} class=commit onmouseenter="showTooltip(evt, commit${this.id}, '${this.message}');"  onmouseout="hideTooltip();"
+        svg_html += `<circle id=commit${this.id} class=commit onmouseenter="showTooltip(evt, commit${this.id}, '${this.message}', '${this.id}');"  onmouseout="hideTooltip();"
         cx= ${this.x} cy= ${this.y} r=${this.radius}
         fill='red'></circle>`
 
@@ -68,8 +68,7 @@ class ToolTip{
         GROMENAUER
         </text>`
     }
-    move(x, y, message){
-//        print(document.getElementById('text'))
+    move(x, y, message, id){
         document.getElementById('text').innerHTML = message;
         document.getElementById('text').setAttribute('x', x + 30);
         document.getElementById('text').setAttribute('y', y + 10);
@@ -110,9 +109,9 @@ function read_json(){
 }
 
 function render(){
-    console.log(commits.length);
-    console.log(commits);
-    console.log(commits.length);
+//    console.log(commits.length);
+//    console.log(commits);
+//    console.log(commits.length);
     init_depth = 20 * commit_count + 50;
     var first = commits[0];
     first.set_pos();
@@ -120,8 +119,8 @@ function render(){
     document.getElementById('svg').innerHTML = svg_html;
     }
 
-function showTooltip(event, object, message){
-    console.log(message);
+function showTooltip(event, object, message, id){
+    console.log(id, message);
     toolTip.move(object.cx.animVal.value, object.cy.animVal.value, message)
 }
 
