@@ -52,7 +52,7 @@ def export(args):
     commits_dict = {str(i): {"message": c.message, "parent": c.parent} for i, c in enumerate(data['commits'])}
     print(commits_dict)
     import json
-    with open('result.json', 'w') as fp:
+    with open('front-end/static/result.json', 'w') as fp:
         json.dump(commits_dict, fp)
 
 
