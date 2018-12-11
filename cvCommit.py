@@ -49,11 +49,14 @@ def checkout(args):
 
 def export(args):
     data = open_repo()
-    # print(data['commits'])
     commits_dict = {str(i): {"message": c.message, "parent": c.parent} for i, c in enumerate(data['commits'])}
-    # print(commits_dict)
+    name = args.name
+    if not name:
+        name = 'commits.json'
+    elif name[-5:] != '.json':
+        name += '.json'
     import json
-    with open('front-end/static/commits.json', 'w') as fp:
+    with open(f'front-end/static/{name}', 'w') as fp:
         json.dump(commits_dict, fp)
 
 
@@ -96,6 +99,7 @@ if __name__ == '__main__':
     parser_checkout.add_argument('index', help='')
 
     parser_export = subparsers.add_parser('export', help='export help')
+    parser_export.add_argument('-n', help='destination name', dest='name')
 
     args = parser.parse_args()
 
