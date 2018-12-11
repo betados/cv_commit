@@ -31,7 +31,11 @@ def init(args):
 
 def commit(args):
     data = open_repo()
-    data['commits'].append(Commit(args.message, data['last']))
+    if not args.message:
+        message = input('Please, give a message for the commit:')
+    else:
+        message = args.message
+    data['commits'].append(Commit(message, data['last']))
     data['last'] = len(data['commits']) - 1
     stream = open('.cv.yaml', 'w')
     yaml.dump(data, stream)
@@ -87,18 +91,18 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Description')
     subparsers = parser.add_subparsers(help='subparsers help', dest='command')
 
-    parser_init = subparsers.add_parser('init', help='init help')
+    parser_init = subparsers.add_parser('init', help='Creates a new CV repository')
 
-    parser_commit = subparsers.add_parser('commit', help='commit help')
+    parser_commit = subparsers.add_parser('commit', help='Creates a new node')
     parser_commit.add_argument('-m', help='', dest='message')
 
     parser_rebase = subparsers.add_parser('rebase', help='rebase help')
     parser_rebase.add_argument('branch', help='')
 
-    parser_checkout = subparsers.add_parser('checkout', help='checkout help')
+    parser_checkout = subparsers.add_parser('checkout', help='Changes the pointer to the given index')
     parser_checkout.add_argument('index', help='')
 
-    parser_export = subparsers.add_parser('export', help='export help')
+    parser_export = subparsers.add_parser('export', help='Export the nodes to a JSON for the viewer to render it')
     parser_export.add_argument('-n', help='destination name', dest='name')
 
     args = parser.parse_args()
