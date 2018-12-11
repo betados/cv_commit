@@ -16,13 +16,16 @@ class Commit(object):
         return self.__class__.__name__ + f'("{self.message}", {self.__parent})'
 
 
+file = '.cv.yaml'
+
+
 def init(args):
     try:
-        open('.cv.yaml', 'r')
+        open(file, 'r')
         print('Already a cv repository')
         exit()
     except FileNotFoundError:
-        stream = open('.cv.yaml', 'w')
+        stream = open(file, 'w')
         yaml.dump({
             'commits': [],
             'last': None,
@@ -37,7 +40,7 @@ def commit(args):
         message = args.message
     data['commits'].append(Commit(message, data['last']))
     data['last'] = len(data['commits']) - 1
-    stream = open('.cv.yaml', 'w')
+    stream = open(file, 'w')
     yaml.dump(data, stream)
 
 
@@ -66,16 +69,16 @@ def export(args):
 
 def open_repo():
     try:
-        open('.cv.yaml', 'r')
+        open(file, 'r')
     except FileNotFoundError:
         print('fatal: not a cv repository')
         exit()
-    stream = open('.cv.yaml', 'r')
+    stream = open(file, 'r')
     return yaml.load(stream)
 
 
 def save_repo(data):
-    stream = open('.cv.yaml', 'w')
+    stream = open(file, 'w')
     yaml.dump(data, stream)
 
 
