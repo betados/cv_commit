@@ -50,10 +50,16 @@ def rebase(args):
 
 def checkout(args):
     data = open_repo()
-    if int(args.index) >= len(data['commits']):
-        print('fatal: not a commit index')
-        exit()
-    data['last'] = int(args.index)
+    if args.branch_name:
+        print(args.branch_name)
+    else:
+        try:
+            if int(args.index) >= len(data['commits']):
+                print('fatal: not a commit index')
+                exit()
+            data['last'] = int(args.index)
+        except ValueError:
+            print(f'fatal: {args.index} is not an integer number')
     save_repo(data)
 
 
@@ -106,7 +112,9 @@ if __name__ == '__main__':
     parser_rebase.add_argument('branch', help='')
 
     parser_checkout = subparsers.add_parser('checkout', help='Changes the pointer to the given index')
-    parser_checkout.add_argument('index', help='')
+    pcg = parser_checkout.add_mutually_exclusive_group(required=True)
+    pcg.add_argument('index', help='', nargs='?')
+    pcg.add_argument('-b', '--branch', dest='branch_name')
 
     parser_export = subparsers.add_parser('export', help='Export the nodes to a JSON for the viewer to render it')
     parser_export.add_argument('-n', help='destination name', dest='name')
