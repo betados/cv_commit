@@ -9,6 +9,7 @@ To init a new cv:
 ````bash
 python cvCommit.py init 
 ```` 
+It will create an empty repository with the default master branch
 
 To generate a new node:
 ````bash
@@ -19,6 +20,16 @@ To checkout on an existing node to make a fork:
 python cvCommit.py checkout commit_index 
 ```` 
 and the new nodes will be created from the one given
+
+To create a new branch:
+````bash
+python cvCommit.py checkout -b "branch name" 
+```` 
+
+To checkout on an existing branch:
+````bash
+python cvCommit.py checkout "branch name" 
+```` 
 
 To view the result you must type:
 ````bash
