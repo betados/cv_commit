@@ -1,4 +1,5 @@
 import argparse
+from collections import namedtuple
 
 import yaml
 
@@ -7,7 +8,6 @@ class Commit(object):
     def __init__(self, message, parent):
         self.message = message
         self.__parent = parent
-        self.branch = None
 
     @property
     def parent(self):
@@ -15,6 +15,12 @@ class Commit(object):
 
     def __repr__(self):
         return self.__class__.__name__ + f'("{self.message}", {self.__parent})'
+
+
+class Branch(object):
+    def __init__(self, name, commit):
+        self.name = name
+        self.commit = commit
 
 
 file = '.cv.yaml'
@@ -26,9 +32,12 @@ def init(args):
         print('Already a cv repository')
     except FileNotFoundError:
         stream = open(file, 'w')
+        # TODO create by default a master branch
         yaml.dump({
             'commits': [],
+            'branches': [Branch('master', None),],
             'last': None,
+            'checked_out_branch': 0,
         }, stream)
 
 
@@ -40,6 +49,7 @@ def commit(args):
         message = args.message
     data['commits'].append(Commit(message, data['last']))
     data['last'] = len(data['commits']) - 1
+    data['branches'][data['checked_out_branch']].commit = data['last']
     stream = open(file, 'w')
     yaml.dump(data, stream)
 
@@ -52,13 +62,16 @@ def checkout(args):
     data = open_repo()
     if args.branch_name:
         print(args.branch_name)
-        data['commits'][data['last']].branch = args.branch_name
+        # TODO check if already exists
+        data['branches'].append(Branch(args.branch_name, data['last']))
+        data['checked_out_branch'] = -1
     else:
         try:
             if int(args.index) >= len(data['commits']):
                 print('fatal: not a commit index')
                 exit()
             data['last'] = int(args.index)
+            data['branches'][data['checked_out_branch']].commit = int(args.index)
         except ValueError:
             print(f'fatal: {args.index} is not an integer number')
     save_repo(data)
@@ -66,8 +79,18 @@ def checkout(args):
 
 def export(args):
     data = open_repo()
-    commits_dict = {str(i): {"message": c.message, "parent": c.parent, "branch": c.branch} for i, c in
-                    enumerate(data['commits'])}
+    # commits_dict = {str(i): {"message": c.message, "parent": c.parent, "branch": } for i, c in
+    #                 enumerate(data['commits'])}
+    commits_dict = {}
+    for i, c in enumerate(data['commits']):
+        branch = None
+        for b in data['branches']:
+            if b.commit == i:
+                if not branch:
+                    branch = [b.name, ]
+                else:
+                    branch.append(b.name)
+        commits_dict[str(i)] = {"message": c.message, "parent": c.parent, "branch": branch}
     name = args.name
     if not name:
         name = 'commits.json'

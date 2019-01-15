@@ -41,19 +41,23 @@ class Commit {
         var font_size = 15;
         var separator = Commit.X  + this.radius*2;
         var bg_width = 0;
+        var cumulated_bg_width = 0;
         if (this.branch){
-            bg_width = (this.branch.length+2) * font_size*0.45;
-            svg_html += `<rect id=rect x=${separator} y=${this.y-7} rx="1" ry="1" width=${bg_width} height=${font_size*1.1}
-            style="fill:green;stroke:black;stroke-width:1;opacity:1" />
-            <text x=${Commit.X  + font_size} y=${this.y + this.radius}
-            fill="white" font-family="Calibri" font-size=font_size>
-            ${this.branch}
-            </text>`
-            separator += font_size
+            for (var i=0; i<this.branch.length; i++){
+                bg_width = (this.branch[i].length+2) * font_size*0.45;
+                svg_html += `<rect id=rect x=${separator + cumulated_bg_width} y=${this.y-7} rx="1" ry="1" width=${bg_width} height=${font_size*1.1}
+                style="fill:green;stroke:black;stroke-width:1;opacity:1" />
+                <text x=${separator + cumulated_bg_width + font_size*0.2} y=${this.y + this.radius}
+                fill="white" font-family="Calibri" font-size=font_size>
+                ${this.branch[i]}
+                </text>`
+                separator += font_size;
+                cumulated_bg_width += bg_width;
+                }
         }
 
         // FIXME font-family not working
-        svg_html += `<text x=${separator + bg_width} y=${this.y + this.radius}
+        svg_html += `<text x=${separator + cumulated_bg_width} y=${this.y + this.radius}
         fill="black" font-family="Calibri" font-size="10">
         ${this.message}
         </text>`
