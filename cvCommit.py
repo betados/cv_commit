@@ -58,6 +58,7 @@ def rebase(args):
     raise NotImplementedError
 
 
+
 def checkout(args):
     data = open_repo()
     if args.branch_name:
@@ -71,7 +72,9 @@ def checkout(args):
                 print('fatal: not a commit index')
                 exit()
             data['last'] = int(args.index)
-            data['branches'][data['checked_out_branch']].commit = int(args.index)
+            print("You are in 'detached HEAD' state.")
+            data['checked_out_branch'] = None
+
         except ValueError:
             for i, branch in enumerate(data['branches']):
                 if branch.name == args.index:
@@ -121,6 +124,7 @@ def open_repo():
 def save_repo(data):
     stream = open(file, 'w')
     yaml.dump(data, stream)
+
 
 
 commands = {
