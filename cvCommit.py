@@ -73,7 +73,14 @@ def checkout(args):
             data['last'] = int(args.index)
             data['branches'][data['checked_out_branch']].commit = int(args.index)
         except ValueError:
-            print(f'fatal: {args.index} is not an integer number')
+            for i, branch in enumerate(data['branches']):
+                if branch.name == args.index:
+                    data['last'] = branch.commit
+                    data['checked_out_branch'] = i
+                    save_repo(data)
+                    return
+            print(f'fatal: {args.index} is not a branch name')
+            exit()
     save_repo(data)
 
 
