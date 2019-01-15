@@ -7,6 +7,7 @@ class Commit(object):
     def __init__(self, message, parent):
         self.message = message
         self.__parent = parent
+        self.branch = None
 
     @property
     def parent(self):
@@ -23,7 +24,6 @@ def init(args):
     try:
         open(file, 'r')
         print('Already a cv repository')
-        exit()
     except FileNotFoundError:
         stream = open(file, 'w')
         yaml.dump({
@@ -52,6 +52,7 @@ def checkout(args):
     data = open_repo()
     if args.branch_name:
         print(args.branch_name)
+        data['commits'][data['last']].branch = args.branch_name
     else:
         try:
             if int(args.index) >= len(data['commits']):
@@ -65,7 +66,8 @@ def checkout(args):
 
 def export(args):
     data = open_repo()
-    commits_dict = {str(i): {"message": c.message, "parent": c.parent} for i, c in enumerate(data['commits'])}
+    commits_dict = {str(i): {"message": c.message, "parent": c.parent, "branch": c.branch} for i, c in
+                    enumerate(data['commits'])}
     name = args.name
     if not name:
         name = 'commits.json'

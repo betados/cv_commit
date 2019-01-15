@@ -4,7 +4,7 @@ var commits = new Array();
 var init_depth = 0
 
 class Commit {
-    constructor(message, parent){
+    constructor(message, parent, branch){
         // FIXME esta no creo que sea la forma de definir un atributo estático
         Commit.X = 120;
         this.id = commit_count;
@@ -17,6 +17,7 @@ class Commit {
 
         this.radius = 5;
         this.message = message;
+        this.branch = branch;
         this.children = new Array();
     }
     set_pos(){
@@ -37,8 +38,18 @@ class Commit {
         cx= ${this.x} cy= ${this.y} r=${this.radius}
         fill='red'></circle>`
 
+        var separator = 0;
+        if (this.branch){
+            separator = 40;
+            svg_html += `<text x=${Commit.X  + this.radius*2} y=${this.y + this.radius}
+            fill="black" font-family="Calibri" font-size="10">
+            ${this.branch}
+            </text>`
+        }
+
         // FIXME font-family not working
-        svg_html += `<text x=${Commit.X  + this.radius*2} y=${this.y + this.radius}
+
+        svg_html += `<text x=${Commit.X  + this.radius*2 + separator} y=${this.y + this.radius}
         fill="black" font-family="Calibri" font-size="10">
         ${this.message}
         </text>`
@@ -116,11 +127,11 @@ function read_json(){
             //  alert( name + ": " + data['message'] +','+data['parent']);
             if (data['parent'] == null){
                 // alert(true);
-                commits.push(new Commit(data['message'], null));
+                commits.push(new Commit(data['message'], null, data['branch']));
                 }
             else{
                 // alert(false);
-                commits.push(new Commit(data['message'], commits[data['parent']]));
+                commits.push(new Commit(data['message'], commits[data['parent']], data['branch']));
             }
         });
         render()
