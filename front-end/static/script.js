@@ -5,6 +5,8 @@ var init_depth = 0
 
 class Commit {
     constructor(message, parent){
+        // FIXME esta no creo que sea la forma de definir un atributo estático
+        Commit.X = 120;
         this.id = commit_count;
         commit_count++;
         this.parent = parent;
@@ -22,7 +24,7 @@ class Commit {
             this.x = this.parent.x - 20 * this.parent.children.indexOf(this);
             this.y = init_depth - 20 * this.id;
         }else{
-            this.x = 40
+            this.x = Commit.X
             this.y = init_depth;
         }
 
@@ -36,7 +38,7 @@ class Commit {
         fill='red'></circle>`
 
         // FIXME font-family not working
-        svg_html += `<text x=${40  + this.radius*2} y=${this.y + this.radius}
+        svg_html += `<text x=${Commit.X  + this.radius*2} y=${this.y + this.radius}
         fill="black" font-family="Calibri" font-size="10">
         ${this.message}
         </text>`
