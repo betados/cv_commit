@@ -40,15 +40,16 @@ class Commit {
 
         var separator = 0;
         if (this.branch){
-            separator = 40;
-            svg_html += `<text x=${Commit.X  + this.radius*2} y=${this.y + this.radius}
-            fill="black" font-family="Calibri" font-size="10">
+            separator = 50;
+            svg_html += `<rect id=rect x=${Commit.X  + this.radius*2} y=${this.y-7} rx="1" ry="1" width="40" height="20"
+            style="fill:green;stroke:black;stroke-width:1;opacity:1" />
+            <text x=${Commit.X  + this.radius*2+3} y=${this.y + this.radius}
+            fill="white" font-family="Calibri" font-size="15">
             ${this.branch}
             </text>`
         }
 
         // FIXME font-family not working
-
         svg_html += `<text x=${Commit.X  + this.radius*2 + separator} y=${this.y + this.radius}
         fill="black" font-family="Calibri" font-size="10">
         ${this.message}
