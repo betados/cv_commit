@@ -47,11 +47,28 @@ class Link {
     constructor(c1, c2){
         this.c1=c1;
         this.c2=c2;
+        if (c1.x != c2.x){
+            this.elbow_x = c2.x;
+            this.elbow_y = (c1.y + c2.y) * 0.5;
+        }
+        else{
+            this.elbow_x = null
+        }
     }
     draw(){
-        svg_html += `<line x1=${this.c1.x} y1=${this.c1.y}
-        x2=${this.c2.x} y2=${this.c2.y}
-        style="stroke:rgb(0,0,0);stroke-width:2" />`
+        if (this.elbow_x == null){
+            svg_html += `<line x1=${this.c1.x} y1=${this.c1.y}
+            x2=${this.c2.x} y2=${this.c2.y}
+            style="stroke:rgb(0,0,0);stroke-width:2" />`
+            }
+        else{
+            svg_html += `<line x1=${this.c1.x} y1=${this.c1.y}
+            x2=${this.elbow_x} y2=${this.elbow_y}
+            style="stroke:rgb(0,0,0);stroke-width:2" />`
+            svg_html += `<line x1=${this.elbow_x} y1=${this.elbow_y}
+            x2=${this.c2.x} y2=${this.c2.y}
+            style="stroke:rgb(0,0,0);stroke-width:2" />`
+        }
     }
 }
 
