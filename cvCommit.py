@@ -50,6 +50,9 @@ def rebase(args):
 
 def checkout(args):
     data = open_repo()
+    if int(args.index) >= len(data['commits']):
+        print('fatal: not a commit index')
+        exit()
     data['last'] = int(args.index)
     save_repo(data)
 
