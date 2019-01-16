@@ -48,7 +48,7 @@ class Commit {
                 svg_html += `<rect id=branch_rect x=${separator + cumulated_bg_width} y=${this.y-7} rx="1" ry="1" width=${bg_width} height=${font_size*1.1}
                 style="fill:green;stroke:black;stroke-width:1;opacity:1" />
                 <text x=${separator + cumulated_bg_width + font_size*0.2} y=${this.y + this.radius}
-                fill="white" font-family="Calibri" font-size=font_size>
+                fill="white" font-family="Arial" font-size=font_size>
                 ${this.branch[i]}
                 </text>`
                 separator += font_size;
@@ -58,7 +58,7 @@ class Commit {
 
         // FIXME font-family not working
         svg_html += `<text x=${separator + cumulated_bg_width} y=${this.y + this.radius}
-        fill="black" font-family="Calibri" font-size="10">
+        fill="black" font-family="Arial" font-size="10">
         ${this.message}
         </text>`
     }
@@ -103,7 +103,7 @@ class ToolTip{
         svg_html += `<rect id=tooltip_rect x="999" y="999" rx="10" ry="10" width="200" height="50"
         style="fill:red;stroke:black;stroke-width:5;opacity:0.9" />
         <text id=tooltip_text x=999 y=999
-        fill="black" font-family="Calibri" font-size=${this.font_size}>
+        fill="black" font-family="Arial" font-size=${this.font_size}>
         GROMENAUER
         </text>`
     }
