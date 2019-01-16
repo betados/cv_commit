@@ -111,13 +111,20 @@ class ToolTip{
         </text>`
     }
     move(x, y, message, id){
-        document.getElementById('tooltip_text').innerHTML = message;
+        var res = message.split(";");
+//        console.log(res);
+        var text = "";
+        for (var i in res) {
+            text +=  `<tspan x=${x + 27} dy=${this.font_size}>${res[i]}</tspan>`
+        }
+        document.getElementById('tooltip_text').innerHTML = text;
         var width = document.getElementById('tooltip_text').getBBox().width;
-        document.getElementById('tooltip_text').setAttribute('x', x + 30);
-        document.getElementById('tooltip_text').setAttribute('y', y + 10);
+        var height = document.getElementById('tooltip_text').getBBox().height;
+        document.getElementById('tooltip_text').setAttribute('y', y - 30);
         document.getElementById('tooltip_rect').setAttribute('x', x + 10);
         document.getElementById('tooltip_rect').setAttribute('y', y - 25);
         document.getElementById('tooltip_rect').setAttribute('width', width+35);
+        document.getElementById('tooltip_rect').setAttribute('height', height);
     }
 }
 
