@@ -1,13 +1,17 @@
 import argparse
-from collections import namedtuple
 
 import yaml
 
 
 class Commit(object):
-    def __init__(self, message, parent):
+    def __init__(self, index, message, parent, description):
         self.message = message
+        if description:
+            self.description = description
+        else:
+            self.description = message
         self.__parent = parent
+        self.index = index
 
     @property
     def parent(self):
@@ -35,7 +39,7 @@ def init(args):
         # TODO create by default a master branch
         yaml.dump({
             'commits': [],
-            'branches': [Branch('master', None),],
+            'branches': [Branch('master', None), ],
             'last': None,
             'checked_out_branch': 0,
         }, stream)
@@ -47,8 +51,9 @@ def commit(args):
         message = input('Please, give a message for the commit:')
     else:
         message = args.message
-    data['commits'].append(Commit(message, data['last']))
-    data['last'] = len(data['commits']) - 1
+    index = len(data['commits'])
+    data['commits'].append(Commit(index, message, data['last'], args.description))
+    data['last'] = index
     data['branches'][data['checked_out_branch']].commit = data['last']
     stream = open(file, 'w')
     yaml.dump(data, stream)
@@ -58,11 +63,10 @@ def rebase(args):
     raise NotImplementedError
 
 
-
 def checkout(args):
     data = open_repo()
     if args.branch_name:
-        print(args.branch_name)
+        print(f'Created new branch {args.branch_name}')
         # TODO check if already exists
         data['branches'].append(Branch(args.branch_name, data['last']))
         data['checked_out_branch'] = -1
@@ -100,7 +104,11 @@ def export(args):
                     branch = [b.name, ]
                 else:
                     branch.append(b.name)
-        commits_dict[str(i)] = {"message": c.message, "parent": c.parent, "branch": branch}
+        commits_dict[str(i)] = {"message": c.message,
+                                "parent": c.parent,
+                                "branch": branch,
+                                "description": c.description,
+                                }
     name = args.name
     if not name:
         name = 'commits.json'
@@ -126,7 +134,6 @@ def save_repo(data):
     yaml.dump(data, stream)
 
 
-
 commands = {
     'init': init,
     'commit': commit,
@@ -143,6 +150,7 @@ if __name__ == '__main__':
 
     parser_commit = subparsers.add_parser('commit', help='Creates a new node')
     parser_commit.add_argument('-m', help='', dest='message')
+    parser_commit.add_argument('-d', help='', dest='description')
 
     parser_rebase = subparsers.add_parser('rebase', help='rebase help')
     parser_rebase.add_argument('branch', help='')

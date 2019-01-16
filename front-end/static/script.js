@@ -4,7 +4,7 @@ var commits = new Array();
 var init_depth = 0
 
 class Commit {
-    constructor(message, parent, branch){
+    constructor(message, parent, branch, description){
         // FIXME esta no creo que sea la forma de definir un atributo estático
         Commit.X = 120;
         this.id = commit_count;
@@ -17,6 +17,7 @@ class Commit {
 
         this.radius = 5;
         this.message = message;
+        this.description = description;
         this.branch = branch;
         this.children = new Array();
     }
@@ -34,7 +35,7 @@ class Commit {
         this.children.push(child);
     }
     draw() {
-        svg_html += `<circle id=commit${this.id} class=commit onmouseenter="showTooltip(evt, commit${this.id}, '${this.message}', '${this.id}');"  onmouseout="hideTooltip();"
+        svg_html += `<circle id=commit${this.id} class=commit onmouseenter="showTooltip(evt, commit${this.id}, '${this.description}', '${this.id}');"  onmouseout="hideTooltip();"
         cx= ${this.x} cy= ${this.y} r=${this.radius}
         fill='red'></circle>`
 
@@ -136,11 +137,11 @@ function read_json(){
             //  alert( name + ": " + data['message'] +','+data['parent']);
             if (data['parent'] == null){
                 // alert(true);
-                commits.push(new Commit(data['message'], null, data['branch']));
+                commits.push(new Commit(data['message'], null, data['branch'], data['description']));
                 }
             else{
                 // alert(false);
-                commits.push(new Commit(data['message'], commits[data['parent']], data['branch']));
+                commits.push(new Commit(data['message'], commits[data['parent']], data['branch'], data['description']));
             }
         });
         render()
