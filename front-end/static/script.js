@@ -41,23 +41,25 @@ class Commit {
 
         var font_size = 15;
         var separator = Commit.X  + this.radius*2;
-        var bg_width = 0;
+        var width = 0;
         var cumulated_bg_width = 0;
         if (this.branch){
             for (var i=0; i<this.branch.length; i++){
-                bg_width = (this.branch[i].length+2) * font_size*0.45;
-                svg_html += `<rect id=branch_rect x=${separator + cumulated_bg_width} y=${this.y-7} rx="1" ry="1" width=${bg_width} height=${font_size*1.1}
+                // Just to know the width of the text
+                document.getElementById('dumb_svg').innerHTML = `<text id='dumb_text' font-family="Arial" font-size=font_size>${this.branch[i]}</text>`;
+                width = document.getElementById('dumb_text').getBBox().width;
+
+                svg_html += `<rect id=branch_rect x=${separator + cumulated_bg_width} y=${this.y-9} rx="1" ry="1" width=${width*1.1} height=${font_size*1.15}
                 style="fill:green;stroke:black;stroke-width:1;opacity:1" />
                 <text x=${separator + cumulated_bg_width + font_size*0.2} y=${this.y + this.radius}
                 fill="white" font-family="Arial" font-size=font_size>
                 ${this.branch[i]}
                 </text>`
                 separator += font_size;
-                cumulated_bg_width += bg_width;
+                cumulated_bg_width += width*1.1;
                 }
         }
 
-        // FIXME font-family not working
         svg_html += `<text x=${separator + cumulated_bg_width} y=${this.y + this.radius}
         fill="black" font-family="Arial" font-size="10">
         ${this.message}
@@ -110,11 +112,12 @@ class ToolTip{
     }
     move(x, y, message, id){
         document.getElementById('tooltip_text').innerHTML = message;
+        var width = document.getElementById('tooltip_text').getBBox().width;
         document.getElementById('tooltip_text').setAttribute('x', x + 30);
         document.getElementById('tooltip_text').setAttribute('y', y + 10);
         document.getElementById('tooltip_rect').setAttribute('x', x + 10);
         document.getElementById('tooltip_rect').setAttribute('y', y - 25);
-        document.getElementById('tooltip_rect').setAttribute('width', (message.length+4) * this.font_size * 0.45);
+        document.getElementById('tooltip_rect').setAttribute('width', width+35);
     }
 }
 
