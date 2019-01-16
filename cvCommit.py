@@ -107,7 +107,7 @@ def export(args):
         commits_dict[str(i)] = {"message": c.message,
                                 "parent": c.parent,
                                 "branch": branch,
-                                "description": c.description,
+                                "description": split_description(c.description),
                                 }
     name = args.name
     if not name:
@@ -117,6 +117,24 @@ def export(args):
     import json
     with open(f'front-end/static/{name}', 'w') as fp:
         json.dump(commits_dict, fp)
+
+
+def split_description(description):
+    max_length = 20
+    last_space = 0
+    spaces_to_change = []
+    j = 0
+    for i, char in enumerate(description):
+        if char == ' ':
+            last_space = i
+        if j == max_length:
+            j = 0
+            if last_space not in spaces_to_change:
+                spaces_to_change.append(last_space)
+        j += 1
+    for space in spaces_to_change:
+        description = description[:space] + ';' + description[space+1:]
+    return description
 
 
 def open_repo():
