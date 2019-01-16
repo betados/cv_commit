@@ -45,7 +45,7 @@ class Commit {
         if (this.branch){
             for (var i=0; i<this.branch.length; i++){
                 bg_width = (this.branch[i].length+2) * font_size*0.45;
-                svg_html += `<rect id=rect x=${separator + cumulated_bg_width} y=${this.y-7} rx="1" ry="1" width=${bg_width} height=${font_size*1.1}
+                svg_html += `<rect id=branch_rect x=${separator + cumulated_bg_width} y=${this.y-7} rx="1" ry="1" width=${bg_width} height=${font_size*1.1}
                 style="fill:green;stroke:black;stroke-width:1;opacity:1" />
                 <text x=${separator + cumulated_bg_width + font_size*0.2} y=${this.y + this.radius}
                 fill="white" font-family="Calibri" font-size=font_size>
@@ -97,27 +97,28 @@ class ToolTip{
     constructor(){
         this.x = 999;
         this.y = 999;
+        this.font_size = 30;
     }
     draw(){
-        svg_html += `<rect id=rect x="999" y="999" rx="10" ry="10" width="200" height="50"
-        style="fill:red;stroke:black;stroke-width:5;opacity:0.5" />
-        <text id=text x=999 y=999
-        fill="black" font-family="Calibri" font-size="30">
+        svg_html += `<rect id=tooltip_rect x="999" y="999" rx="10" ry="10" width="200" height="50"
+        style="fill:red;stroke:black;stroke-width:5;opacity:0.9" />
+        <text id=tooltip_text x=999 y=999
+        fill="black" font-family="Calibri" font-size=${this.font_size}>
         GROMENAUER
         </text>`
     }
     move(x, y, message, id){
-        document.getElementById('text').innerHTML = message;
-        document.getElementById('text').setAttribute('x', x + 30);
-        document.getElementById('text').setAttribute('y', y + 10);
-        document.getElementById('rect').setAttribute('x', x + 10);
-        document.getElementById('rect').setAttribute('y', y - 25);
-        document.getElementById('rect').setAttribute('width', (message.length+4) * 13);
+        document.getElementById('tooltip_text').innerHTML = message;
+        document.getElementById('tooltip_text').setAttribute('x', x + 30);
+        document.getElementById('tooltip_text').setAttribute('y', y + 10);
+        document.getElementById('tooltip_rect').setAttribute('x', x + 10);
+        document.getElementById('tooltip_rect').setAttribute('y', y - 25);
+        document.getElementById('tooltip_rect').setAttribute('width', (message.length+4) * this.font_size * 0.45);
     }
 }
 
 var toolTip = new ToolTip();
-toolTip.draw();
+//toolTip.draw();
 
 function draw(last) {
     for (var i=0; i<last.children.length; i++){
@@ -154,6 +155,7 @@ function render(){
     var first = commits[0];
     first.set_pos();
     draw(first);
+    toolTip.draw();
     document.getElementById('svg').innerHTML = svg_html;
     }
 
