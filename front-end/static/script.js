@@ -103,8 +103,8 @@ class ToolTip{
         this.font_size = 30;
     }
     draw(){
-        svg_html += `<rect id=tooltip_rect x="999" y="999" rx="10" ry="10" width="200" height="50"
-        style="fill:red;stroke:black;stroke-width:5;opacity:0.9" />
+        svg_html += `<rect id=tooltip_rect x="999" y="999" rx="7" ry="7" width="200" height="50"
+        style="fill:red;stroke:black;stroke-width:3;opacity:0.8" />
         <text id=tooltip_text x=999 y=999
         fill="black" font-family="Arial" font-size=${this.font_size}>
         GROMENAUER
@@ -121,10 +121,11 @@ class ToolTip{
         var width = document.getElementById('tooltip_text').getBBox().width;
         var height = document.getElementById('tooltip_text').getBBox().height;
         document.getElementById('tooltip_text').setAttribute('y', y - 30);
+
         document.getElementById('tooltip_rect').setAttribute('x', x + 10);
-        document.getElementById('tooltip_rect').setAttribute('y', y - 25);
+        document.getElementById('tooltip_rect').setAttribute('y', y - 30);
         document.getElementById('tooltip_rect').setAttribute('width', width+35);
-        document.getElementById('tooltip_rect').setAttribute('height', height);
+        document.getElementById('tooltip_rect').setAttribute('height', height*1.05);
     }
 }
 
