@@ -13,8 +13,10 @@ It will create an empty repository with the default master branch
 
 To generate a new node:
 ````bash
-python cvCommit.py commmit -m "message" 
+python cvCommit.py commmit -m "message" -d "description"
 ```` 
+The description is optional
+
 To checkout on an existing node to make a fork:
 ````bash
 python cvCommit.py checkout commit_index 
