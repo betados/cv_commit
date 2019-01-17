@@ -64,7 +64,20 @@ def status(args):
 
 
 def rebase(args):
-    raise NotImplementedError
+    # raise NotImplementedError
+    data = open_repo()
+    # print(args.base)
+    try:
+        index = int(args.base)
+        commit = data['commits'][data['last']]
+        while commit.parent is not None:
+            if commit.index == index:
+                print('Already rebased')
+                exit()
+            commit = data['commits'][commit.parent]
+
+    except ValueError:
+        raise NotImplementedError
 
 
 def checkout(args):
@@ -178,7 +191,7 @@ if __name__ == '__main__':
     parser_status = subparsers.add_parser('status', help='rebase help')
 
     parser_rebase = subparsers.add_parser('rebase', help='rebase help')
-    parser_rebase.add_argument('branch', help='')
+    parser_rebase.add_argument('base', help='')
 
     parser_checkout = subparsers.add_parser('checkout', help='Changes the pointer to the given index')
     pcg = parser_checkout.add_mutually_exclusive_group(required=True)
