@@ -36,31 +36,34 @@ def init(args=None):
         print('Already a cv repository')
     except FileNotFoundError:
         stream = open(file, 'w')
+        master = Branch('master', None)
         yaml.dump({
             'commits': [],
-            'branches': [Branch('master', None), ],
+            'branches': [master, ],
             'last': None,
-            'checked_out_branch': 0,
+            'checked_out_branch': master,
         }, stream)
 
 
-def commit(args):
+def commit_func(args):
     data = open_repo()
     if not args.message:
         message = input('Please, give a message for the commit:')
     else:
         message = args.message
     index = len(data['commits'])
-    data['commits'].append(Commit(index, message, data['last'], args.description))
-    data['last'] = index
-    data['branches'][data['checked_out_branch']].commit = data['last']
+    commit = Commit(index, message, data['last'], args.description)
+    data['commits'].append(commit)
+    data['last'] = commit
+    data['checked_out_branch'].commit = commit
     stream = open(file, 'w')
     yaml.dump(data, stream)
 
 
 def status(args):
+    # FIXME not working when in detached HEAD status
     data = open_repo()
-    print(f'On branch {data["branches"][data["checked_out_branch"]].name}')
+    print(f'On branch {data["checked_out_branch"].name}')
 
 
 def rebase(args):
@@ -72,22 +75,23 @@ def checkout(args):
     if args.branch_name:
         print(f'Created new branch {args.branch_name}')
         # TODO check if already exists
-        data['branches'].append(Branch(args.branch_name, data['last']))
-        data['checked_out_branch'] = -1
+        branch = Branch(args.branch_name, data['last'])
+        data['branches'].append(branch)
+        data['checked_out_branch'] = branch
     else:
         try:
             if int(args.index) >= len(data['commits']):
                 print('fatal: not a commit index')
                 exit()
-            data['last'] = int(args.index)
+            data['last'] = data['commits'][int(args.index)]
             print("You are in 'detached HEAD' state.")
             data['checked_out_branch'] = None
 
         except ValueError:
-            for i, branch in enumerate(data['branches']):
+            for branch in data['branches']:
                 if branch.name == args.index:
                     data['last'] = branch.commit
-                    data['checked_out_branch'] = i
+                    data['checked_out_branch'] = branch
                     save_repo(data)
                     return
             print(f'fatal: {args.index} is not a branch name')
@@ -101,18 +105,23 @@ def export(args):
     #                 enumerate(data['commits'])}
     commits_dict = {}
     for i, c in enumerate(data['commits']):
-        branch = None
+        branches = None
         for b in data['branches']:
-            if b.commit == i:
-                if not branch:
-                    branch = [b.name, ]
+            if b.commit == c:
+                if not branches:
+                    branches = [b.name, ]
                 else:
-                    branch.append(b.name)
+                    branches.append(b.name)
+        try:
+            parent_index = c.parent.index
+        except AttributeError:
+            parent_index = None
         commits_dict[str(i)] = {"message": c.message,
-                                "parent": c.parent,
-                                "branch": branch,
+                                "parent": parent_index,
+                                "branch": branches,
                                 "description": split_description(c.description),
                                 }
+    # print(commits_dict)
     name = args.name
     if not name:
         name = 'commits.json'
@@ -158,7 +167,7 @@ def save_repo(data):
 
 commands = {
     'init': init,
-    'commit': commit,
+    'commit': commit_func,
     'status': status,
     'rebase': rebase,
     'checkout': checkout,
