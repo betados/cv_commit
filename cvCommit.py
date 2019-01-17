@@ -83,7 +83,7 @@ def checkout(args):
             if int(args.index) >= len(data['commits']):
                 print('fatal: not a commit index')
                 exit()
-            data['last'] = data['commits'][int(args.index)]
+            data['last'] = get_commit_by_index(data['commit'], int(args.index))
             print("You are in 'detached HEAD' state.")
             data['checked_out_branch'] = None
 
@@ -99,10 +99,14 @@ def checkout(args):
     save_repo(data)
 
 
+def get_commit_by_index(commits, index):
+    for commit in commits:
+        if commit.index == index:
+            return commit
+
+
 def export(args):
     data = open_repo()
-    # commits_dict = {str(i): {"message": c.message, "parent": c.parent, "branch": } for i, c in
-    #                 enumerate(data['commits'])}
     commits_dict = {}
     for i, c in enumerate(data['commits']):
         branches = None
@@ -121,7 +125,6 @@ def export(args):
                                 "branch": branches,
                                 "description": split_description(c.description),
                                 }
-    # print(commits_dict)
     name = args.name
     if not name:
         name = 'commits.json'
@@ -146,7 +149,7 @@ def split_description(description):
                 spaces_to_change.append(last_space)
         j += 1
     for space in spaces_to_change:
-        description = description[:space] + ';' + description[space+1:]
+        description = description[:space] + ';' + description[space + 1:]
     return description
 
 
