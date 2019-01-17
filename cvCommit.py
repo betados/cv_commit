@@ -30,13 +30,12 @@ class Branch(object):
 file = '.cv.yaml'
 
 
-def init(args):
+def init(args=None):
     try:
         open(file, 'r')
         print('Already a cv repository')
     except FileNotFoundError:
         stream = open(file, 'w')
-        # TODO create by default a master branch
         yaml.dump({
             'commits': [],
             'branches': [Branch('master', None), ],
