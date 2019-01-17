@@ -33,6 +33,12 @@ To checkout on an existing branch:
 python cvCommit.py checkout "branch name" 
 ```` 
 
+To know in witch branch you are working on:
+````bash
+python cvCommit.py status" 
+```` 
+
+
 To view the result you must type:
 ````bash
 python cvCommit.py export

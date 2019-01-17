@@ -59,6 +59,11 @@ def commit(args):
     yaml.dump(data, stream)
 
 
+def status(args):
+    data = open_repo()
+    print(f'On branch {data["branches"][data["checked_out_branch"]].name}')
+
+
 def rebase(args):
     raise NotImplementedError
 
@@ -155,6 +160,7 @@ def save_repo(data):
 commands = {
     'init': init,
     'commit': commit,
+    'status': status,
     'rebase': rebase,
     'checkout': checkout,
     'export': export,
@@ -169,6 +175,8 @@ if __name__ == '__main__':
     parser_commit = subparsers.add_parser('commit', help='Creates a new node')
     parser_commit.add_argument('-m', help='', dest='message')
     parser_commit.add_argument('-d', help='', dest='description')
+
+    parser_status = subparsers.add_parser('status', help='rebase help')
 
     parser_rebase = subparsers.add_parser('rebase', help='rebase help')
     parser_rebase.add_argument('branch', help='')
