@@ -150,7 +150,7 @@ def split_description(description):
                 spaces_to_change.append(last_space)
         j += 1
     for space in spaces_to_change:
-        description = description[:space] + ';' + description[space+1:]
+        description = description[:space] + ';' + description[space + 1:]
     return description
 
 
