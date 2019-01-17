@@ -39,9 +39,9 @@ def init(args=None):
         master = Branch('master', None)
         yaml.dump({
             'commits': [],
-            'branches': [master, ],
+            'z_branches': [master, ],
             'last': None,
-            'checked_out_branch': master,
+            'z_checked_out_branch': master,
         }, stream)
 
 
@@ -53,9 +53,12 @@ def commit_func(args):
         message = args.message
     index = len(data['commits'])
     commit = Commit(index, message, data['last'], args.description)
+    try:
+        data['z_checked_out_branch'].commit = commit
+    except AttributeError:
+        print('fatal')
     data['commits'].append(commit)
     data['last'] = commit
-    data['checked_out_branch'].commit = commit
     stream = open(file, 'w')
     yaml.dump(data, stream)
 
@@ -63,7 +66,7 @@ def commit_func(args):
 def status(args):
     # FIXME not working when in detached HEAD status
     data = open_repo()
-    print(f'On branch {data["checked_out_branch"].name}')
+    print(f'On branch {data["z_checked_out_branch"].name}')
 
 
 def rebase(args):
@@ -76,22 +79,22 @@ def checkout(args):
         print(f'Created new branch {args.branch_name}')
         # TODO check if already exists
         branch = Branch(args.branch_name, data['last'])
-        data['branches'].append(branch)
-        data['checked_out_branch'] = branch
+        data['z_branches'].append(branch)
+        data['z_checked_out_branch'] = branch
     else:
         try:
             if int(args.index) >= len(data['commits']):
                 print('fatal: not a commit index')
                 exit()
-            data['last'] = get_commit_by_index(data['commit'], int(args.index))
+            data['last'] = get_commit_by_index(data['commits'], int(args.index))
             print("You are in 'detached HEAD' state.")
-            data['checked_out_branch'] = None
+            data['z_checked_out_branch'] = None
 
         except ValueError:
-            for branch in data['branches']:
+            for branch in data['z_branches']:
                 if branch.name == args.index:
                     data['last'] = branch.commit
-                    data['checked_out_branch'] = branch
+                    data['z_checked_out_branch'] = branch
                     save_repo(data)
                     return
             print(f'fatal: {args.index} is not a branch name')
@@ -110,7 +113,7 @@ def export(args):
     commits_dict = {}
     for i, c in enumerate(data['commits']):
         branches = None
-        for b in data['branches']:
+        for b in data['z_branches']:
             if b.commit == c:
                 if not branches:
                     branches = [b.name, ]
@@ -137,7 +140,7 @@ def export(args):
 
 def split_description(description):
     max_length = 20
-    last_space = 0
+    last_space = 0 
     spaces_to_change = []
     j = 0
     for i, char in enumerate(description):
