@@ -17,6 +17,10 @@ class Commit(object):
     def parent(self):
         return self.__parent
 
+    @parent.setter
+    def parent(self, p):
+        self.__parent = p
+
     def __repr__(self):
         return self.__class__.__name__ + f'("{self.message}", {self.__parent})'
 
@@ -65,16 +69,40 @@ def status(args):
 
 def rebase(args):
     # raise NotImplementedError
+    # FIXME el script de js crea la lista de commits de forma dronologica y no permite que alguien más viejo sea hijo de alguien más joven
     data = open_repo()
     # print(args.base)
     try:
-        index = int(args.base)
+        base = int(args.base)
         commit = data['commits'][data['last']]
+        ancestors = [commit.index, ]
         while commit.parent is not None:
-            if commit.index == index:
+            if commit.index == base:
                 print('Already rebased')
                 exit()
             commit = data['commits'][commit.parent]
+            ancestors.append(commit.index)
+
+        commit = data['commits'][base]
+        base_ancestors = []
+        while commit.parent is not None:
+            commit = data['commits'][commit.parent]
+            base_ancestors.append(commit.index)
+        ancestors.sort()
+        base_ancestors.sort()
+
+        print(ancestors)
+        print(base_ancestors)
+        for e in base_ancestors:
+            if e in ancestors:
+                ancestors.remove(e)
+
+        data['commits'][ancestors[0]].parent = base
+        save_repo(data)
+        print()
+        print(ancestors)
+        print(base_ancestors)
+
 
     except ValueError:
         raise NotImplementedError
