@@ -53,20 +53,22 @@ def commit_func(args):
         message = args.message
     index = len(data['commits'])
     commit = Commit(index, message, data['last'], args.description)
+    data['commits'].append(commit)
+    data['last'] = commit
     try:
         data['z_checked_out_branch'].commit = commit
     except AttributeError:
-        print('fatal')
-    data['commits'].append(commit)
-    data['last'] = commit
+        pass
     stream = open(file, 'w')
     yaml.dump(data, stream)
 
 
 def status(args):
-    # FIXME not working when in detached HEAD status
     data = open_repo()
-    print(f'On branch {data["z_checked_out_branch"].name}')
+    try:
+        print(f'On branch {data["z_checked_out_branch"].name}')
+    except AttributeError:
+        print('You are not in any branch')
 
 
 def rebase(args):
