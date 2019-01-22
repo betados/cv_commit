@@ -125,7 +125,7 @@ class ToolTip{
         document.getElementById('tooltip_rect').setAttribute('x', x + 10);
         document.getElementById('tooltip_rect').setAttribute('y', y - 30);
         document.getElementById('tooltip_rect').setAttribute('width', width+35);
-        document.getElementById('tooltip_rect').setAttribute('height', height*1.05);
+        document.getElementById('tooltip_rect').setAttribute('height', height*1.09);
     }
 }
 
